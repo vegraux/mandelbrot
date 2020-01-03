@@ -30,12 +30,15 @@ def recursive_color(c, max_iter=100, z0=0):
     return counter
 
 
-def mandelbrot_figure(x1, x2, y1, y2, resolution=500):
+def mandelbrot_figure(x1=-1.666, x2=1, y1=-1.2, y2=1.2, resolution=500):
     figure = go.Figure(
         data=go.Heatmap(
             x=np.linspace(x1, x2, resolution),
             y=np.linspace(y1, y2, resolution),
             z=get_data_numpy(x1=x1, x2=x2, y1=y1, y2=y2, resolution=resolution),
+            hoverinfo="none",
+            showscale=False,
+            colorscale="inferno",
         ),
         layout=go.Layout(width=800, height=700),
     )
@@ -51,8 +54,6 @@ def numpy_recursive(cs, z0=0):
         selection = (a >= 2) & (iters == 0)
         sel = np.where(selection)
         iters[sel] = i
-
-    iters[iters == 0] = i
 
     return iters
 
