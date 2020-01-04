@@ -10,23 +10,52 @@ __email__ = "vegardsolberg@hotmail.com"
 import dash
 
 import dash_core_components as dcc
+import dash_bootstrap_components as dbc
 import dash_html_components as html
 
-from src.utils import mandelbrot_figure
+from src.utils import mandelbrot_figure, card_color, card_max_iter, card_resolution
 from dash.dependencies import Input, Output
 
-external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+MAX_ITER = 300
+RESOLUTION = 500
+SWIRCH_NR = 5
+
+
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+
+def create_sliders():
+    return [
+        dbc.Card(card_color, color="secondary", inverse=True),
+        dbc.Card(card_max_iter, color="secondary", inverse=True),
+        dbc.Card(card_resolution, color="secondary", inverse=True),
+    ]
+
 
 layout = html.Div(
-    children=[
+    [
         html.H1(id="header", children="Mandelbrot"),
         html.P(
             id="info-text",
-            children="Explore the mandelbrot set by zooming on the figure",
+            children="Explore the mandelbrot set by zooming in the figure",
         ),
-        dcc.Graph(id="mandelbrot-fig", figure=mandelbrot_figure()),
+        dbc.Row(
+            [
+                dbc.Col(
+                    dcc.Graph(
+                        id="mandelbrot-fig",
+                        figure=mandelbrot_figure(
+                            max_iter=MAX_ITER,
+                            resolution=RESOLUTION,
+                            switch_nr=SWIRCH_NR,
+                        ),
+                    ),
+                    md=6,
+                ),
+                dbc.Col(create_sliders(), md=4),
+            ]
+        ),
     ]
 )
 
@@ -34,18 +63,39 @@ app.layout = layout
 
 
 @app.callback(
-    Output(component_id="mandelbrot-fig", component_property="figure"),
-    [Input(component_id="mandelbrot-fig", component_property="relayoutData")],
+    Output("mandelbrot-fig", "figure"),
+    [
+        Input("mandelbrot-fig", "relayoutData"),
+        Input("color-slider", "value"),
+        Input("resolution-slider", "value"),
+        Input("max-iter-slider", "value"),
+    ],
 )
-def update_data(relayoutData):
+def update_data(relayoutData, switch_nr, resolution, max_iter):
     if relayoutData is None:
-        return mandelbrot_figure()
-    else:
+        return mandelbrot_figure(
+            max_iter=max_iter, resolution=resolution, switch_nr=switch_nr
+        )
+
+    elif any(["axis.range" in key for key in list(relayoutData.keys())]):
         x1 = relayoutData["xaxis.range[0]"]
         x2 = relayoutData["xaxis.range[1]"]
         y1 = relayoutData["yaxis.range[0]"]
         y2 = relayoutData["yaxis.range[1]"]
-        return mandelbrot_figure(x1, x2, y1, y2)
+        return mandelbrot_figure(
+            x1,
+            x2,
+            y1,
+            y2,
+            max_iter=max_iter,
+            resolution=resolution,
+            switch_nr=switch_nr,
+        )
+
+    else:
+        return mandelbrot_figure(
+            max_iter=max_iter, resolution=resolution, switch_nr=switch_nr
+        )
 
 
 if __name__ == "__main__":

@@ -6,18 +6,14 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-kafka-python = "*"
 jupyter = "*"
-ipython = "*"
-sympy = "*"
 numpy = "*"
-opencv-python = "*"
 matplotlib = "*"
-seaborn = "*"
 plotly = "*"
-keras = "*"
 pandas = "*"
 dash = "*"
+numba = "*"
+dash-bootstrap-components = "*"
 
 [requires]
 python_version = "3.7"
