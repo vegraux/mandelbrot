@@ -68,7 +68,7 @@ def create_colorscale(max_iter, switch_nr):
 
 
 def mandelbrot_figure(
-    x1=-2, x2=1, y1=-1.2, y2=1.2, resolution=900, max_iter=100, switch_nr=4
+    x1=-2, x2=1, y1=-1.2, y2=1.2, resolution=900, max_iter=100, switch_nr=5
 ):
     xrange, yrange, data = get_data_numba(
         x1=x1, x2=x2, y1=y1, y2=y2, resolution=resolution, max_iter=max_iter

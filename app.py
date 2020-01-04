@@ -19,7 +19,7 @@ from dash.dependencies import Input, Output
 
 MAX_ITER = 300
 RESOLUTION = 500
-SWIRCH_NR = 5
+SWITCH_NR = 5
 
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -48,7 +48,7 @@ layout = html.Div(
                         figure=mandelbrot_figure(
                             max_iter=MAX_ITER,
                             resolution=RESOLUTION,
-                            switch_nr=SWIRCH_NR,
+                            switch_nr=SWITCH_NR,
                         ),
                     ),
                     md=6,

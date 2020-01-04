@@ -1,5 +1,7 @@
-# mandelbrot
+# Mandelbrot
 Dash application for exploring the Mandelbrot set
+
+![](notebooks\mandelbrot-app-gif.gif)
 
 ## Install
 This project uses [pipenv](https://pipenv-fork.readthedocs.io/en/latest/).
