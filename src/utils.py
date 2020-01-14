@@ -9,7 +9,7 @@ __email__ = "vegardsolberg@hotmail.com"
 
 import plotly.graph_objects as go
 import numpy as np
-from numba import jit, guvectorize, complex64, int32
+from numba import jit, guvectorize, int32, int64, complex128
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 
@@ -83,9 +83,7 @@ def mandelbrot_figure(
             colorscale=create_colorscale(max_iter=max_iter, switch_nr=switch_nr),
         ),
         layout=go.Layout(
-            margin=dict(l=20, r=20, t=20, b=20),
-            # width=600,
-            # height=500
+            margin=dict(l=20, r=20, t=20, b=20), height=650
         ),  # width=800, height=700
     )
     return figure
@@ -131,7 +129,7 @@ def get_data_numpy(x1=-1.666, x2=1, y1=-1.2, y2=1.2, resolution=200):
     return numpy_recursive(cs)
 
 
-@jit(int32(complex64, int32))
+@jit(int64(complex128, int32))
 def mandelbrot(c, maxiter):
     real = 0
     imag = 0
@@ -144,7 +142,7 @@ def mandelbrot(c, maxiter):
     return 0
 
 
-@guvectorize([(complex64[:], int32[:], int32[:])], "(n),()->(n)", target="parallel")
+@guvectorize([(complex128[:], int32[:], int32[:])], "(n),()->(n)", target="parallel")
 def mandelbrot_numpy(c, maxit, output):
     maxiter = maxit[0]
     for i in range(c.shape[0]):
@@ -152,8 +150,8 @@ def mandelbrot_numpy(c, maxit, output):
 
 
 def get_data_numba(x1=-1.666, x2=1, y1=-1.2, y2=1.2, resolution=200, max_iter=100):
-    xrange = np.linspace(x1, x2, resolution, dtype=np.float32)
-    yrange = np.linspace(y1, y2, resolution, dtype=np.float32)
+    xrange = np.linspace(x1, x2, resolution, dtype=np.float64)
+    yrange = np.linspace(y1, y2, resolution, dtype=np.float64)
     c = xrange + yrange[:, None] * 1j
     data = mandelbrot_numpy(c, max_iter)
     return (xrange, yrange, data)
@@ -167,7 +165,14 @@ card_color = [
                 "Try pulling the slider to the right to see shapes when zoomed in",
                 className="card-text",
             ),
-            dcc.Slider(id="color-slider", min=4, max=40, step=1, value=1),
+            dcc.Slider(
+                id="color-slider",
+                min=4,
+                max=60,
+                step=1,
+                value=4,
+                marks={k: str(k) for k in range(5, 61, 5)},
+            ),
         ]
     )
 ]
@@ -180,7 +185,14 @@ card_max_iter = [
                 "Number of iteration before a number is said to be in the Mandelbrot set",
                 className="card-text",
             ),
-            dcc.Slider(id="max-iter-slider", min=10, max=500, step=30, value=300),
+            dcc.Slider(
+                id="max-iter-slider",
+                min=10,
+                max=1000,
+                step=30,
+                value=300,
+                marks={k: str(k) for k in range(100, 1001, 100)},
+            ),
         ]
     )
 ]
@@ -190,7 +202,14 @@ card_resolution = [
         [
             html.H5("Select resolution", className="card-title"),
             html.P("Number of pixels in width and height", className="card-text"),
-            dcc.Slider(id="resolution-slider", min=100, max=1500, step=100, value=500),
+            dcc.Slider(
+                id="resolution-slider",
+                min=100,
+                max=1000,
+                step=100,
+                value=500,
+                marks={k: str(k) for k in range(100, 1001, 100)},
+            ),
         ]
     )
 ]

@@ -16,20 +16,20 @@ import dash_html_components as html
 from src.utils import mandelbrot_figure, card_color, card_max_iter, card_resolution
 from dash.dependencies import Input, Output
 
-
 MAX_ITER = 300
 RESOLUTION = 500
 SWITCH_NR = 5
-
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 
 def create_sliders():
     return [
-        dbc.Card(card_color, color="secondary", inverse=True),
-        dbc.Card(card_max_iter, color="secondary", inverse=True),
-        dbc.Card(card_resolution, color="secondary", inverse=True),
+        html.Br(),
+        html.Br(),
+        dbc.Card(card_color, color="light", inverse=False),
+        dbc.Card(card_max_iter, color="light", inverse=False),
+        dbc.Card(card_resolution, color="light", inverse=False),
     ]
 
 
@@ -51,9 +51,9 @@ layout = html.Div(
                             switch_nr=SWITCH_NR,
                         ),
                     ),
-                    md=6,
+                    md=8,
                 ),
-                dbc.Col(create_sliders(), md=4),
+                dbc.Col(create_sliders(), md=3),
             ]
         ),
     ]
