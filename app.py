@@ -35,6 +35,7 @@ def create_sliders():
 
 layout = html.Div(
     [
+        html.Br(),
         html.H1(id="header", children="Mandelbrot"),
         html.P(
             id="info-text",

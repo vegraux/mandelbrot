@@ -12,6 +12,7 @@ import numpy as np
 from numba import jit, guvectorize, int32, int64, complex128
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
+import seaborn as sns
 
 import dash_html_components as html
 
@@ -35,7 +36,14 @@ def recursive_color(c, max_iter=100, z0=0):
     return counter
 
 
-def create_colorscale(max_iter, switch_nr):
+def array_to_rgb(array):
+    rgb_string = "rgb("
+    for value in array:
+        rgb_string += str(int(value * 255)) + ","
+    return rgb_string[:-1] + ")"
+
+
+def create_colorscale(max_iter, switch_nr, color_gradient=False):
     """
     Creates colorscale for plotting of the Mandelbrot set
     :param max_iter: Iterations before loop breaks when calculating if z is in
@@ -54,6 +62,14 @@ def create_colorscale(max_iter, switch_nr):
         "rgb(248, 201, 95)",
         "rgb(255, 170, 0)",
     ]
+
+    colors = []
+    if color_gradient:
+        for color in ["purple", "green", "orange", "blue", "red"]:
+            colors += sns.light_palette(color, reverse=True)
+
+        color_list = [array_to_rgb(color) for color in colors]
+
     dx = (1 / max_iter) * switch_nr
     colorscale = [[0, "rgb(0, 0, 0)"], [dx, "rgb(0 ,0, 0)"]]
 
@@ -68,7 +84,7 @@ def create_colorscale(max_iter, switch_nr):
 
 
 def mandelbrot_figure(
-    x1=-2, x2=1, y1=-1.2, y2=1.2, resolution=900, max_iter=100, switch_nr=5
+    x1=-2, x2=1, y1=-1.2, y2=1.2, resolution=500, max_iter=300, switch_nr=5
 ):
     xrange, yrange, data = get_data_numba(
         x1=x1, x2=x2, y1=y1, y2=y2, resolution=resolution, max_iter=max_iter
@@ -80,7 +96,9 @@ def mandelbrot_figure(
             z=data,
             hoverinfo="none",
             showscale=False,
-            colorscale=create_colorscale(max_iter=max_iter, switch_nr=switch_nr),
+            colorscale=create_colorscale(
+                max_iter=max_iter, switch_nr=switch_nr, color_gradient=False
+            ),
         ),
         layout=go.Layout(
             margin=dict(l=20, r=20, t=20, b=20), height=650
@@ -170,7 +188,7 @@ card_color = [
                 min=4,
                 max=60,
                 step=1,
-                value=4,
+                value=5,
                 marks={k: str(k) for k in range(5, 61, 5)},
             ),
         ]
