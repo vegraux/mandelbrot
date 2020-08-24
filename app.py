@@ -21,7 +21,7 @@ RESOLUTION = 500
 SWITCH_NR = 5
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-
+server = app.server
 
 def create_sliders():
     return [

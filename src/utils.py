@@ -12,7 +12,6 @@ import numpy as np
 from numba import jit, guvectorize, int32, int64, complex128
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
-import seaborn as sns
 
 import dash_html_components as html
 
@@ -43,7 +42,7 @@ def array_to_rgb(array):
     return rgb_string[:-1] + ")"
 
 
-def create_colorscale(max_iter, switch_nr, color_gradient=False):
+def create_colorscale(max_iter, switch_nr):
     """
     Creates colorscale for plotting of the Mandelbrot set
     :param max_iter: Iterations before loop breaks when calculating if z is in
@@ -62,13 +61,6 @@ def create_colorscale(max_iter, switch_nr, color_gradient=False):
         "rgb(248, 201, 95)",
         "rgb(255, 170, 0)",
     ]
-
-    colors = []
-    if color_gradient:
-        for color in ["purple", "green", "orange", "blue", "red"]:
-            colors += sns.light_palette(color, reverse=True)
-
-        color_list = [array_to_rgb(color) for color in colors]
 
     dx = (1 / max_iter) * switch_nr
     colorscale = [[0, "rgb(0, 0, 0)"], [dx, "rgb(0 ,0, 0)"]]
@@ -97,7 +89,7 @@ def mandelbrot_figure(
             hoverinfo="none",
             showscale=False,
             colorscale=create_colorscale(
-                max_iter=max_iter, switch_nr=switch_nr, color_gradient=False
+                max_iter=max_iter, switch_nr=switch_nr
             ),
         ),
         layout=go.Layout(
