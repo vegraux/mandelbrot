@@ -79,19 +79,18 @@ def update_data(relayoutData, switch_nr, resolution, max_iter):
         )
 
     elif any(["axis.range" in key for key in list(relayoutData.keys())]):
-        x1 = relayoutData["xaxis.range[0]"]
-        x2 = relayoutData["xaxis.range[1]"]
-        y1 = relayoutData["yaxis.range[0]"]
-        y2 = relayoutData["yaxis.range[1]"]
-        return mandelbrot_figure(
-            x1,
-            x2,
-            y1,
-            y2,
-            max_iter=max_iter,
-            resolution=resolution,
-            switch_nr=switch_nr,
+        relayout_map = {
+            "xaxis.range[0]": "x1",
+            "xaxis.range[1]": "x2",
+            "yaxis.range[0]": "y1",
+            "yaxis.range[1]": "y2",
+        }
+
+        kwargs = {relayout_map[key]: relayoutData[key] for key in relayoutData}
+        kwargs.update(
+            {"max_iter": max_iter, "resolution": resolution, "switch_nr": switch_nr}
         )
+        return mandelbrot_figure(**kwargs)
 
     else:
         return mandelbrot_figure(
