@@ -13,7 +13,14 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 
-from src.utils import mandelbrot_figure, card_color, card_max_iter, card_resolution
+from src.utils import (
+    mandelbrot_figure,
+    card_color,
+    card_max_iter,
+    card_resolution,
+    coordinates,
+    relayout_map,
+)
 from dash.dependencies import Input, Output
 
 MAX_ITER = 300
@@ -22,6 +29,7 @@ SWITCH_NR = 5
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
+
 
 def create_sliders():
     return [
@@ -73,29 +81,14 @@ app.layout = layout
     ],
 )
 def update_data(relayoutData, switch_nr, resolution, max_iter):
+    kwargs = {"max_iter": max_iter, "resolution": resolution, "switch_nr": switch_nr}
     if relayoutData is None:
-        return mandelbrot_figure(
-            max_iter=max_iter, resolution=resolution, switch_nr=switch_nr
-        )
-
+        kwargs.update(coordinates)
     elif any(["axis.range" in key for key in list(relayoutData.keys())]):
-        relayout_map = {
-            "xaxis.range[0]": "x1",
-            "xaxis.range[1]": "x2",
-            "yaxis.range[0]": "y1",
-            "yaxis.range[1]": "y2",
-        }
-
-        kwargs = {relayout_map[key]: relayoutData[key] for key in relayoutData}
-        kwargs.update(
-            {"max_iter": max_iter, "resolution": resolution, "switch_nr": switch_nr}
-        )
-        return mandelbrot_figure(**kwargs)
-
-    else:
-        return mandelbrot_figure(
-            max_iter=max_iter, resolution=resolution, switch_nr=switch_nr
-        )
+        new_coordinates = {relayout_map[key]: relayoutData[key] for key in relayoutData}
+        coordinates.update(new_coordinates)
+        kwargs.update(coordinates)
+    return mandelbrot_figure(**kwargs)
 
 
 if __name__ == "__main__":

@@ -88,55 +88,13 @@ def mandelbrot_figure(
             z=data,
             hoverinfo="none",
             showscale=False,
-            colorscale=create_colorscale(
-                max_iter=max_iter, switch_nr=switch_nr
-            ),
+            colorscale=create_colorscale(max_iter=max_iter, switch_nr=switch_nr),
         ),
         layout=go.Layout(
             margin=dict(l=20, r=20, t=20, b=20), height=650
         ),  # width=800, height=700
     )
     return figure
-
-
-def numpy_recursive(cs, z0=0, max_iter=100):
-    iters = np.zeros_like(cs, dtype=int)
-    z = z0 * np.ones_like(cs)
-    for i in range(max_iter):
-        z = z ** 2 + cs
-        a = np.abs(z)
-        selection = (a >= 2) & (iters == 0)
-        sel = np.where(selection)
-        iters[sel] = i
-
-    return iters
-
-
-def get_data(x1=-1.666, x2=1, y1=-1.2, y2=1.2, resolution=200):
-    x_interval, y_interval = (
-        np.linspace(x1, x2, resolution),
-        np.linspace(y1, y2, resolution),
-    )
-    xx, yy = np.meshgrid(x_interval, y_interval)
-    zz = np.zeros_like(xx)
-
-    for i in range(resolution):
-        for k in range(resolution):
-            c = np.complex(xx[i, k], yy[i, k])
-            zz[i, k] = recursive_color(c)
-
-    return zz
-
-
-def get_data_numpy(x1=-1.666, x2=1, y1=-1.2, y2=1.2, resolution=200):
-    x_interval = np.linspace(x1, x2, resolution)
-    y_interval = np.linspace(y1, y2, resolution)
-    xx, yy = np.meshgrid(x_interval, y_interval)
-    cs = np.zeros_like(xx, dtype=complex)
-    for i in range(resolution):
-        for k in range(resolution):
-            cs[i, k] = np.complex(xx[i, k], yy[i, k])
-    return numpy_recursive(cs)
 
 
 @jit(int64(complex128, int32))
@@ -223,3 +181,11 @@ card_resolution = [
         ]
     )
 ]
+
+coordinates = {"x1": -2, "x2": 1, "y1": -1.2, "y2": 1.2}
+relayout_map = {
+    "xaxis.range[0]": "x1",
+    "xaxis.range[1]": "x2",
+    "yaxis.range[0]": "y1",
+    "yaxis.range[1]": "y2",
+}
