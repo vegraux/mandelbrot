@@ -11,9 +11,9 @@ import plotly.graph_objects as go
 import numpy as np
 from numba import jit, guvectorize, int32, int64, complex128
 import dash_bootstrap_components as dbc
-import dash_core_components as dcc
+from dash import dcc
 
-import dash_html_components as html
+from dash import html
 
 
 def func(z, c):
